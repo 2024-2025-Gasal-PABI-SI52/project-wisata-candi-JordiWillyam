@@ -3,7 +3,7 @@ import 'package:project_wisata_candi/models/candi.dart';
 
 class DetailScreen extends StatelessWidget {
   final Candi candi;
-  
+
   const DetailScreen({super.key, required this.candi});
 
   @override
