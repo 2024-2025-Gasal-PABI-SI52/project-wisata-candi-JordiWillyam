@@ -29,7 +29,7 @@ class DetailScreen extends StatelessWidget {
               ),
               //Tombol back Custom
               Padding(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.deepPurple[100]?.withOpacity(0.8),
@@ -45,11 +45,96 @@ class DetailScreen extends StatelessWidget {
           ),
           // Detail info
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
                 //Info Atas
+                const SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      candi.name,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                        onPressed: () {}, icon: const Icon(Icons.favorite))
+                  ],
+                ),
                 //Info Tengah
+                const SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.place,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    const SizedBox(
+                      width: 70,
+                      child: Text(
+                        'Lokasi',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Text(': ${candi.location}')
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.calendar_month,
+                      color: Colors.blue,
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    const SizedBox(
+                      width: 70,
+                      child: Text(
+                        'Lokasi',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Text(': ${candi.built}')
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.house,
+                      color: Colors.green,
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    SizedBox(
+                      width: 70,
+                      child: Text(
+                        'Tipe',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Text(': ${candi.type}')
+                  ],
+                ),
+                //Pemisah
+                SizedBox(
+                  height: 16,
+                ),
+                Divider(
+                  color: Colors.deepPurple.shade100,
+                ),
+                SizedBox(
+                  height: 16,
+                )
                 //Info Bawah
               ],
             ),
