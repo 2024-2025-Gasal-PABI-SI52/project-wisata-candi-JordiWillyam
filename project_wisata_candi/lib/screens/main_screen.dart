@@ -46,8 +46,11 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.deepPurple,
+        selectedItemColor: Colors.amber,
+        unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
       ),
     );
   }
