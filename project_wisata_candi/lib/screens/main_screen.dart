@@ -4,6 +4,7 @@ import 'package:project_wisata_candi/screens/detail_screen.dart';
 import 'package:project_wisata_candi/screens/home_screen.dart';
 import 'package:project_wisata_candi/screens/profile_screen.dart';
 
+//bottom navigation bar
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
