@@ -1,5 +1,5 @@
 name: project_wisata_candi
-description: "A new Flutter project."
+description: "Candi Wisata"
 publish_to: 'none'
 version: 0.1.0
 
@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  shared_preferences: ^2.0.8
 
   cached_network_image: ^3.4.1
 
