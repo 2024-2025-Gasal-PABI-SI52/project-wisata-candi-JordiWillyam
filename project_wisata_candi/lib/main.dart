@@ -20,10 +20,13 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         appBarTheme: const AppBarTheme(
           iconTheme: IconThemeData(color: Colors.deepPurple),
-          titleTextStyle: TextStyle(color: Colors.deepPurple, 
-          fontSize: 20, fontWeight: FontWeight.bold),  
+          titleTextStyle: TextStyle(
+              color: Colors.deepPurple,
+              fontSize: 20,
+              fontWeight: FontWeight.bold),
         ),
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple).copyWith(
+        colorScheme:
+            ColorScheme.fromSeed(seedColor: Colors.deepPurple).copyWith(
           primary: Colors.deepPurple,
           surface: Colors.deepPurple[50],
         ),
@@ -34,7 +37,7 @@ class MainApp extends StatelessWidget {
       // ),
       // home: ProfileScreen(),
       // home: SignInScreen(),
-      home: const HomeScreen(),
+      home: const MainScreen(),
     );
   }
 }

@@ -7,6 +7,16 @@ class DetailScreen extends StatelessWidget {
 
   const DetailScreen({super.key, required this.candi});
 
+  // Fungsi untuk memperbesar gambar dengan efek zoom-in
+  void _showFullImage(BuildContext context, String imageUrl) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FullScreenImagePage(imageUrl: imageUrl),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,8 +26,6 @@ class DetailScreen extends StatelessWidget {
             children: [
               Stack(
                 children: [
-                  // Detail Header
-                  //Image Utama
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: ClipRRect(
@@ -30,7 +38,6 @@ class DetailScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  //Tombol back Custom
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Container(
@@ -39,20 +46,20 @@ class DetailScreen extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
                         icon: const Icon(Icons.arrow_back),
                       ),
                     ),
                   )
                 ],
               ),
-              // Detail info
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    //Info Atas
                     const SizedBox(
                       height: 16,
                     ),
@@ -68,7 +75,6 @@ class DetailScreen extends StatelessWidget {
                             onPressed: () {}, icon: const Icon(Icons.favorite))
                       ],
                     ),
-                    //Info Tengah
                     const SizedBox(
                       height: 16,
                     ),
@@ -129,7 +135,6 @@ class DetailScreen extends StatelessWidget {
                         Text(': ${candi.type}')
                       ],
                     ),
-                    //Pemisah
                     const SizedBox(
                       height: 16,
                     ),
@@ -139,7 +144,6 @@ class DetailScreen extends StatelessWidget {
                     const SizedBox(
                       height: 16,
                     ),
-                    //Info Bawah
                     const Text(
                       'Deskripsi',
                       style:
@@ -154,7 +158,6 @@ class DetailScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              //Detail Gallery
               Padding(
                 padding: const EdgeInsets.all(15),
                 child: Column(
@@ -177,7 +180,6 @@ class DetailScreen extends StatelessWidget {
                     const SizedBox(
                       height: 10,
                     ),
-                    // Gallery Gambar Horizontal
                     SizedBox(
                       height: 100,
                       child: ListView.builder(
@@ -187,31 +189,35 @@ class DetailScreen extends StatelessWidget {
                           return Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: GestureDetector(
-                                onTap: () {},
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: Colors.deepPurple.shade100,
-                                        width: 2,
-                                      )),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: CachedNetworkImage(
-                                      imageUrl: candi.imageUrls[index],
-                                      height: 120,
-                                      width: 120,
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) => Container(
-                                        width: 120,
-                                        height: 120,
-                                        color: Colors.deepPurple[50],
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          const Icon(Icons.error),
-                                    ),
+                              onTap: () {
+                                _showFullImage(context, candi.imageUrls[index]);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: Colors.deepPurple.shade100,
+                                    width: 2,
                                   ),
-                                )),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: CachedNetworkImage(
+                                    imageUrl: candi.imageUrls[index],
+                                    height: 120,
+                                    width: 120,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Container(
+                                      width: 120,
+                                      height: 120,
+                                      color: Colors.deepPurple[50],
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
+                                  ),
+                                ),
+                              ),
+                            ),
                           );
                         },
                       ),
@@ -229,5 +235,78 @@ class DetailScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class FullScreenImagePage extends StatefulWidget {
+  final String imageUrl;
+
+  const FullScreenImagePage({Key? key, required this.imageUrl})
+      : super(key: key);
+
+  @override
+  _FullScreenImagePageState createState() => _FullScreenImagePageState();
+}
+
+class _FullScreenImagePageState extends State<FullScreenImagePage>
+    with TickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+      ),
+    );
+    _controller
+        .forward(); // Start the animation as soon as the screen is loaded
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: GestureDetector(
+        onTap: () {
+          Navigator.pop(context);
+        },
+        child: Center(
+          child: AnimatedBuilder(
+            animation: _scaleAnimation,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: _scaleAnimation.value,
+                child: CachedNetworkImage(
+                  imageUrl: widget.imageUrl,
+                  fit: BoxFit.contain,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(
+                    color: Colors.deepPurple,
+                  ),
+                  errorWidget: (context, url, error) =>
+                      const Icon(Icons.error, color: Colors.white),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
