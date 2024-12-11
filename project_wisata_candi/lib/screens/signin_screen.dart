@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:project_wisata_candi/data/user_data.dart';
+import 'package:project_wisata_candi/models/user.dart';
 
 class SignInScreen extends StatefulWidget {
-  SignInScreen({super.key});
+  const SignInScreen({super.key});
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
@@ -10,13 +12,12 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   // Deklarasi variabel
-  final TextEditingController _usernameController = TextEditingController();
-
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  String _errorText = '';
+  final String _errorText = '';
 
-  bool _isSignIn = false;
+  final bool _isSignIn = false;
 
   bool _obscurePassword = true;
 
@@ -31,7 +32,8 @@ class _SignInScreenState extends State<SignInScreen> {
       // Body
       body: Center(
         child: SingleChildScrollView(
-          child: Padding(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 300),
             padding: const EdgeInsets.all(16),
             child: Form(
                 child: Column(
@@ -39,13 +41,25 @@ class _SignInScreenState extends State<SignInScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // buat TextFormField untuk nama pengguna
-                TextFormField(
-                  controller: _usernameController,
+                // Logo Aplikasi
+                SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.asset("images/mangalogo.jpg"),
+                  ),
+                ),
+                // buat TextFormField untuk Email
+                const SizedBox(
+                  height: 16,
+                ),
+                TextField(
+                  controller: _emailController,
                   decoration: const InputDecoration(
-                    labelText: "Nama Pengguna",
-                    hintText: "Masukkan nama pengguna Anda",
                     border: OutlineInputBorder(),
+                    labelText: "Email",
+                    hintText: "Input Your Email",
                   ),
                 ),
                 // buat TextFormField untuk kata sandi
@@ -53,8 +67,8 @@ class _SignInScreenState extends State<SignInScreen> {
                 TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(
-                    labelText: "Kata Sandi",
-                    hintText: "Masukkan kata sandi",
+                    labelText: "Password",
+                    hintText: "Input Your Password",
                     border: const OutlineInputBorder(),
                     errorText: _errorText.isNotEmpty ? _errorText : null,
                     suffixIcon: IconButton(
@@ -64,7 +78,9 @@ class _SignInScreenState extends State<SignInScreen> {
                         });
                       },
                       icon: Icon(
-                        _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                       ),
                     ),
                   ),
@@ -88,16 +104,17 @@ class _SignInScreenState extends State<SignInScreen> {
                 RichText(
                   text: TextSpan(
                     text: "Belum punya akun?",
-                    style: TextStyle(color: Colors.deepPurple, fontSize: 16),
+                    style:
+                        const TextStyle(color: Colors.deepPurple, fontSize: 16),
                     children: [
                       TextSpan(
                         text: " Daftar di sini.",
                         style: const TextStyle(
-                          color: Colors.blue, 
+                          color: Colors.blue,
                           fontSize: 16,
-                          decoration: TextDecoration.underline,),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {},
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()..onTap = () {},
                       ),
                     ],
                   ),
@@ -108,5 +125,14 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
       ),
     );
+  }
+
+  bool validateLogin(String email, String password) {
+    for (User user in userList) {
+      if (user.email == email && user.password == password) {
+        return true;
+      }
+    }
+    return false;
   }
 }

@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:project_wisata_candi/data/candi_data.dart';
-import 'package:project_wisata_candi/screens/detail_screen.dart';
 import 'package:project_wisata_candi/screens/home_screen.dart';
-import 'package:project_wisata_candi/screens/main_screen.dart';
-import 'package:project_wisata_candi/screens/profile_screen.dart';
 import 'package:project_wisata_candi/screens/signin_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MainApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isSignIn = prefs.getBool("isSignIn") ?? false;
+
+  runApp(MainApp(
+    isSignIn: isSignIn,
+  ));
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  final bool isSignIn;
+  const MainApp({super.key, required this.isSignIn});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +41,11 @@ class MainApp extends StatelessWidget {
       // ),
       // home: ProfileScreen(),
       // home: SignInScreen(),
-      home: SignInScreen(),
+      home: isSignIn ? const HomeScreen() : const SignInScreen(),
+      routes: {
+        "/login": (context) => const SignInScreen(),
+        "/home": (context) => const HomeScreen(),
+      },
     );
   }
 }

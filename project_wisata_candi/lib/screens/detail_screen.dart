@@ -241,8 +241,7 @@ class DetailScreen extends StatelessWidget {
 class FullScreenImagePage extends StatefulWidget {
   final String imageUrl;
 
-  const FullScreenImagePage({Key? key, required this.imageUrl})
-      : super(key: key);
+  const FullScreenImagePage({super.key, required this.imageUrl});
 
   @override
   _FullScreenImagePageState createState() => _FullScreenImagePageState();
