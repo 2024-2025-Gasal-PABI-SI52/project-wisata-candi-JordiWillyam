@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_wisata_candi/screens/home_screen.dart';
+import 'package:project_wisata_candi/screens/main_screen.dart';
 import 'package:project_wisata_candi/screens/signin_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -44,7 +45,7 @@ class MainApp extends StatelessWidget {
       home: isSignIn ? const HomeScreen() : const SignInScreen(),
       routes: {
         "/login": (context) => const SignInScreen(),
-        "/home": (context) => const HomeScreen(),
+        "/home": (context) => const MainScreen(),
       },
     );
   }

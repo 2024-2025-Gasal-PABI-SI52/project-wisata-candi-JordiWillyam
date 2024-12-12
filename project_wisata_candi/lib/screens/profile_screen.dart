@@ -1,6 +1,5 @@
-//Template default Stateful Widget
-
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -9,26 +8,63 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-// class dan implementasi State (Kode Logika)
 class _ProfileScreenState extends State<ProfileScreen> {
-  // Variable yang dibutuhkan
-  bool isSignedIn = false;
-  String username = "JordiW";
-  String fullname = "Jordi";
+  late String email = "";
+  late String name = "";
   int favoriteCandiCount = 0;
 
-  // Implementasi fungsi Sign in
-  void signIn() {
+  Future<void> _loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      isSignedIn = !isSignedIn;
+      email = prefs.getString("email") ?? "Unknown";
+      name = prefs.getString("name") ?? "Unknown";
     });
   }
 
-  // Implementasi fungsi Sign out
-  void signOut() {
-    setState(() {
-      isSignedIn = !isSignedIn;
-    });
+  Future<void> _signOut(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    Navigator.pushReplacementNamed(context, "/login");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Widget _buildUserInfoRow(IconData icon, Color iconColor, String label, String value) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width / 3,
+              child: Row(
+                children: [
+                  Icon(icon, color: iconColor),
+                  const SizedBox(width: 8),
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Text(
+                ": $value",
+                style: const TextStyle(fontSize: 18),
+              ),
+            ),
+          ],
+        ),
+        const Divider(),
+      ],
+    );
   }
 
   @override
@@ -44,169 +80,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Bagian Profile Header
+                const SizedBox(height: 150),
                 Align(
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 150),
-                    child: Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.deepPurple,
-                              width: 2,
-                            ),
-                            shape: BoxShape.circle,
+                  alignment: Alignment.center,
+                  child: Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.deepPurple,
+                            width: 2,
                           ),
-                          child: const CircleAvatar(
-                            radius: 50,
-                            backgroundImage:
-                                AssetImage("images/placeholder_image.png"),
-                          ),
+                          shape: BoxShape.circle,
                         ),
-                        if (isSignedIn)
-                          IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.camera_alt,
-                                  color: Colors.deepPurple[50])),
-                      ],
+                        child: const CircleAvatar(
+                          radius: 50,
+                          backgroundImage: AssetImage("images/placeholder_image.png"),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildUserInfoRow(Icons.lock, Colors.amber, "Pengguna", email),
+                _buildUserInfoRow(Icons.person, Colors.blue, "Nama", name),
+                _buildUserInfoRow(Icons.favorite, Colors.red, "Favorite", "$favoriteCandiCount"),
+                const SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () => _signOut(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    ),
+                    child: const Text(
+                      "Sign Out",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
                 ),
-                // Bagian profile info
-                // Baris 1 Profile Info Pengguna
-                const SizedBox(height: 4),
-                Divider(
-                  color: Colors.deepPurple[100],
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-
-                Row(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: const Row(
-                        children: [
-                          Icon(Icons.lock, color: Colors.amber),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Text(
-                            "Pengguna",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                        child: Text(
-                      ": $username",
-                      style: const TextStyle(fontSize: 18),
-                    ))
-                  ],
-                ),
-
-                // Baris 2 Profile Info Nama
-                const SizedBox(height: 4),
-                Divider(
-                  color: Colors.deepPurple[100],
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-
-                Row(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: const Row(
-                        children: [
-                          Icon(Icons.person, color: Colors.blue),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            "Nama",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                        child: Text(
-                      ": $fullname",
-                      style: const TextStyle(fontSize: 18),
-                    )),
-                    if (isSignedIn) const Icon(Icons.edit),
-                  ],
-                ),
-                // Baris 3 Favorite
-                const SizedBox(height: 4),
-                Divider(
-                  color: Colors.deepPurple[100],
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-
-                Row(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 3,
-                      child: const Row(
-                        children: [
-                          Icon(Icons.favorite, color: Colors.red),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            "Favorite",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                        child: Text(
-                      ": $favoriteCandiCount",
-                      style: const TextStyle(fontSize: 18),
-                    ))
-                  ],
-                ),
-
-                // Bagian profile Action
-                const SizedBox(height: 4),
-                Divider(
-                  color: Colors.deepPurple[100],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-
-                // Cara tulis if else dengan ternary operator
-                // sign in / sign out button
-                isSignedIn
-                    ? TextButton(
-                        onPressed: signOut, child: const Text("Sign Out"))
-                    : TextButton(
-                        onPressed: signIn, child: const Text("Sign In"))
               ],
             ),
-          )
+          ),
         ],
       ),
     );
