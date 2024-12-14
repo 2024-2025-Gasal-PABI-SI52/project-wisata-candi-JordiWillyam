@@ -2,20 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:project_wisata_candi/data/candi_data.dart';
 import 'package:project_wisata_candi/models/candi.dart';
 import 'package:project_wisata_candi/screens/detail_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class FavoriteScreen extends StatefulWidget {
+  const FavoriteScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<FavoriteScreen> createState() => _FavoriteScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _FavoriteScreenState extends State<FavoriteScreen> {
+  List<Candi> _favoriteCandi = [];
+
+  Future<void> _getFavoriteList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> favoriteCandiNames =
+        prefs.getStringList("favoriteCandi") ?? [];
+    // get favorite list from shared preferences
+
+    setState(() {
+      _favoriteCandi = candiList
+          .where((candi) => favoriteCandiNames.contains(candi.name))
+          .toList();
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getFavoriteList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: const Text('Favorite'),
       ),
       body: SafeArea(
           child: SingleChildScrollView(
@@ -27,10 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, crossAxisSpacing: 8, mainAxisSpacing: 8),
               padding: const EdgeInsets.all(8),
-              itemCount: candiList.length,
+              //ganti jadi _favoriteCandi
+              itemCount: _favoriteCandi.length,
               //item builder
               itemBuilder: (context, index) {
-                Candi varCandi = candiList[index];
+                Candi varCandi = _favoriteCandi[index];
                 return InkWell(
                   onTap: () {
                     Navigator.push(

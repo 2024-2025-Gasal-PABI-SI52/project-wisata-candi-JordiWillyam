@@ -1,11 +1,59 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:project_wisata_candi/models/candi.dart';
+import 'package:project_wisata_candi/screens/main_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class DetailScreen extends StatelessWidget {
-  final Candi candi;
+class DetailScreen extends StatefulWidget {
+  final Candi varCandi;
 
-  const DetailScreen({super.key, required this.candi});
+  const DetailScreen({super.key, required this.varCandi});
+
+  @override
+  State<DetailScreen> createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends State<DetailScreen> {
+  bool _isFavorite = false;
+
+  Future<void> _loadFavorite() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> favoriteCandi = prefs.getStringList("favoriteCandi") ?? [];
+    setState(() {
+      _isFavorite = favoriteCandi.contains(widget.varCandi.name);
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadFavorite();
+  }
+
+  Future<void> _toggleFavorite() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> favoriteCandi = prefs.getStringList("favoriteCandi") ?? [];
+
+    setState(() {
+      if (_isFavorite) {
+        // proses unfavorite
+        favoriteCandi.remove(widget.varCandi.name);
+        _isFavorite = false;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("${widget.varCandi.name} removed from favorites "),
+        ));
+      } else {
+        favoriteCandi.add(widget.varCandi.name);
+        _isFavorite = true;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("${widget.varCandi.name} added to favorites "),
+        ));
+      }
+    });
+    await prefs.setStringList("favoriteCandi", favoriteCandi);
+    ;
+  }
 
   // Fungsi untuk memperbesar gambar dengan efek zoom-in
   void _showFullImage(BuildContext context, String imageUrl) {
@@ -31,7 +79,7 @@ class DetailScreen extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: Image.asset(
-                        candi.imageAsset,
+                        widget.varCandi.imageAsset,
                         width: double.infinity,
                         height: 300,
                         fit: BoxFit.cover,
@@ -45,9 +93,12 @@ class DetailScreen extends StatelessWidget {
                         color: Colors.deepPurple[100]?.withOpacity(0.8),
                         shape: BoxShape.circle,
                       ),
+                      // icon back detail screen
                       child: IconButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => const MainScreen())
+                          );
                         },
                         icon: const Icon(Icons.arrow_back),
                       ),
@@ -67,12 +118,19 @@ class DetailScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          candi.name,
+                          widget.varCandi.name,
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
+                        // icon favorite
                         IconButton(
-                            onPressed: () {}, icon: const Icon(Icons.favorite))
+                          onPressed: _toggleFavorite,
+                          icon: Icon(
+                            _isFavorite
+                                ? Icons.favorite : 
+                            Icons.favorite_border),
+                          color: _isFavorite ? Colors.red : null,
+                        )
                       ],
                     ),
                     const SizedBox(
@@ -94,7 +152,7 @@ class DetailScreen extends StatelessWidget {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                        Text(': ${candi.location}')
+                        Text(': ${widget.varCandi.location}')
                       ],
                     ),
                     Row(
@@ -113,7 +171,7 @@ class DetailScreen extends StatelessWidget {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                        Text(': ${candi.built}')
+                        Text(': ${widget.varCandi.built}')
                       ],
                     ),
                     Row(
@@ -132,7 +190,7 @@ class DetailScreen extends StatelessWidget {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                        Text(': ${candi.type}')
+                        Text(': ${widget.varCandi.type}')
                       ],
                     ),
                     const SizedBox(
@@ -153,7 +211,7 @@ class DetailScreen extends StatelessWidget {
                       height: 16,
                     ),
                     Text(
-                      candi.description,
+                      widget.varCandi.description,
                     )
                   ],
                 ),
@@ -184,13 +242,14 @@ class DetailScreen extends StatelessWidget {
                       height: 100,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: candi.imageUrls.length,
+                        itemCount: widget.varCandi.imageUrls.length,
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: GestureDetector(
                               onTap: () {
-                                _showFullImage(context, candi.imageUrls[index]);
+                                _showFullImage(
+                                    context, widget.varCandi.imageUrls[index]);
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -203,7 +262,7 @@ class DetailScreen extends StatelessWidget {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
                                   child: CachedNetworkImage(
-                                    imageUrl: candi.imageUrls[index],
+                                    imageUrl: widget.varCandi.imageUrls[index],
                                     height: 120,
                                     width: 120,
                                     fit: BoxFit.cover,

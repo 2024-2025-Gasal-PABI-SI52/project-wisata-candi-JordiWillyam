@@ -24,6 +24,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _signOut(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+    ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text("You have successfully signed out."),
+    ));
+    // Delay the navigation to allow the SnackBar to be visible for a moment
+    await Future.delayed(const Duration(seconds: 1));
     Navigator.pushReplacementNamed(context, "/login");
   }
 
@@ -33,7 +39,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadUserData();
   }
 
-  Widget _buildUserInfoRow(IconData icon, Color iconColor, String label, String value) {
+  Widget _buildUserInfoRow(
+      IconData icon, Color iconColor, String label, String value) {
     return Column(
       children: [
         Row(
@@ -98,7 +105,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         child: const CircleAvatar(
                           radius: 50,
-                          backgroundImage: AssetImage("images/placeholder_image.png"),
+                          backgroundImage:
+                              AssetImage("images/placeholder_image.png"),
                         ),
                       ),
                     ],
@@ -107,14 +115,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 16),
                 _buildUserInfoRow(Icons.lock, Colors.amber, "Pengguna", email),
                 _buildUserInfoRow(Icons.person, Colors.blue, "Nama", name),
-                _buildUserInfoRow(Icons.favorite, Colors.red, "Favorite", "$favoriteCandiCount"),
+                _buildUserInfoRow(Icons.favorite, Colors.red, "Favorite",
+                    "$favoriteCandiCount"),
                 const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
                     onPressed: () => _signOut(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepPurple,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 12),
                     ),
                     child: const Text(
                       "Sign Out",

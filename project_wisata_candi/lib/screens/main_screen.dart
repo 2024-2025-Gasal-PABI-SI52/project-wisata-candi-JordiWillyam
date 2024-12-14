@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_wisata_candi/data/candi_data.dart';
 import 'package:project_wisata_candi/screens/detail_screen.dart';
+import 'package:project_wisata_candi/screens/favorite_screen.dart';
 import 'package:project_wisata_candi/screens/home_screen.dart';
 import 'package:project_wisata_candi/screens/profile_screen.dart';
 
@@ -17,7 +18,7 @@ class _MainScreenState extends State<MainScreen> {
 
   static final List<Widget> _screenOptions = <Widget>[
     const HomeScreen(),
-    DetailScreen(candi: candiList[0]),
+    const FavoriteScreen(),
     const ProfileScreen(),
   ];
 
@@ -38,8 +39,8 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.location_on),
-            label: 'Detail',
+            icon: Icon(Icons.favorite),
+            label: 'Favorite',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
